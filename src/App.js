@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import style from './App.css';
 import MainPage from './components/MainPage'
 import SearchSection from './components/SearchSection'
+import MoviesCards from './components/MoviesCards'
 
 class App extends Component {
   render() {
@@ -14,6 +15,7 @@ class App extends Component {
         </header>
         <MainPage>
           <SearchSection/>
+          <MoviesCards/>
         </MainPage>
       </div>
     )

@@ -28,11 +28,18 @@ export function hideSuccessMsg(){
   }
 }
 
-export function fetchMovies(query){
+export function setQuery(query){
+  return {
+    type: 'SET_QUERY',
+    payload: query
+  }
+}
+
+export function fetchMovies({query = '', page = 1}){
   return async dispatch => {
     dispatch(showPreloader())
     try {
-      const { data } = await axios.get(api.searchMovie(query))
+      const { data } = await axios.get(api.searchMovie(query, page))
       dispatch(setMovies(data))
     } catch (err) {
       console.log(err)

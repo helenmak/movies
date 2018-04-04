@@ -1,5 +1,9 @@
 const initialState = {
-  result: null
+  results: null,
+  page: 1,
+  total_pages: 0,
+  total_results: 0,
+  query: ''
 }
 
 const moviesReducer = (state = initialState, action)=>{
@@ -8,9 +12,12 @@ const moviesReducer = (state = initialState, action)=>{
   switch(_action.type){
 
     case 'SET_MOVIES':
+      _state = {...state, ..._action.payload}
+      break;
+    case 'SET_QUERY':
       _state = {
         ...state,
-        result: _action.payload
+        query: _action.payload
       }
       break;
 
@@ -19,7 +26,7 @@ const moviesReducer = (state = initialState, action)=>{
   }
 
   return _state;
-};
+}
 
 export default moviesReducer
 
