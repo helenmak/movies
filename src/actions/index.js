@@ -35,6 +35,28 @@ export function setQuery(query){
   }
 }
 
+export function fetchGenres(){
+  return async dispatch => {
+    dispatch(showPreloader())
+    try {
+      const { data } = await axios.get(api.fetchGenres())
+      dispatch(setGenres(data))
+    } catch (err) {
+      console.log(err)
+    } finally {
+      dispatch(hidePreloader())
+      dispatch(showSuccessMsg());
+    }
+  }
+}
+
+export function setGenres(genres){
+  return {
+    type: 'SET_GENRES',
+    payload: genres
+  }
+}
+
 export function fetchMovies({query = '', page = 1}){
   return async dispatch => {
     dispatch(showPreloader())
@@ -53,6 +75,28 @@ export function fetchMovies({query = '', page = 1}){
 export function setMovies(data){
   return {
     type: 'SET_MOVIES',
+    payload: data
+  }
+}
+
+export function fetchCurrentMovie(id){
+  return async dispatch => {
+    dispatch(showPreloader())
+    try {
+      const { data } = await axios.get(api.fetchMovie(id))
+      dispatch(setCurrentMovie(data))
+    } catch (err) {
+      console.log(err)
+    } finally {
+      dispatch(hidePreloader())
+      dispatch(showSuccessMsg());
+    }
+  }
+}
+
+export function setCurrentMovie(data){
+  return {
+    type: 'SET_CURRENT_MOVIE',
     payload: data
   }
 }

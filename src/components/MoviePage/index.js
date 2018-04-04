@@ -1,19 +1,22 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import { Switch, Route } from 'react-router-dom'
+import {branch, renderComponent} from 'recompose'
 
 import { List, Avatar, Icon } from 'antd'
 import * as actions from '../../actions'
 
-class MoviesCards extends React.Component {
+const Page = props => {
+  return <div> {props.children} </div>
+}
+
+class MoviePage extends React.Component {
   state = {
-    currentPage: 1,
-    totalResults: 0
+    currentMovie: '',
   }
 
   static getDerivedStateFromProps (nextProps) {
     return {
-      currentPage: nextProps.currentPage,
+      currentMovie: nextProps.currentPage,
       totalResults: nextProps.totalResults
     }
   }
@@ -27,9 +30,10 @@ class MoviesCards extends React.Component {
   }
 
   handleMovieCardClick = movieId => {
-    this.props.fetchCurrentMovie(movieId)
-    this.props.history.push(`movies/${movieId}`)
+    console.log('eee', movieId)
+    
   }
+
 
   render () {
     const IconText = ({ type, text }) => (
@@ -61,7 +65,7 @@ class MoviesCards extends React.Component {
           onClick ={()=>this.handleMovieCardClick(movie.id)}
         >
           <List.Item.Meta
-            title={movie.title}
+            title={this.props.title}
             description={movie.adult && '18+'}
           />
           {movie.overview}
@@ -73,19 +77,21 @@ class MoviesCards extends React.Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchMovies: query => dispatch(actions.fetchMovies(query)),
-    fetchCurrentMovie: id => dispatch(actions.fetchCurrentMovie(id))
+    fetchMovies: query => dispatch(actions.fetchMovies(query))
   }
 }
 
 const mapStateToProps = state => {
   return {
-    movies: state.movies.results,
-    query: state.movies.query,
-    currentPage: state.movies.page,
-    totalResults: state.movies.total_results,
-    totalPages: state.movies.total_pages
+    movie: state.movie
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MoviesCards)
+const NoContent = props => <h3>Sorry, no movie</h3>
+
+const DelayedMoviePage = branch(
+  props => !props.movie, //TODO: loading + spinner
+  renderComponent(NoContent)
+)(MoviePage)
+
+export default connect(mapStateToProps, mapDispatchToProps)(DelayedMoviePage)

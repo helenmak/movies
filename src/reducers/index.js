@@ -1,14 +1,13 @@
 import {combineReducers} from 'redux';
 
-// import openSendingForm from './openSendingForm';
-// import submitCard from './submitCard';
-import movies from './movies';
+import movies from './movies'
+import currentMovie from './movie'
+import genres from './genres'
 
 const reducers = combineReducers({
-  movies
-  // openSendingForm,
-  // submitCard,
-  // cardData
+  movies,
+  genres,
+  currentMovie
 });
 
 export default reducers;
