@@ -4,34 +4,13 @@ import {branch, renderComponent} from 'recompose'
 
 import { Card, Layout, Row, Col } from 'antd'
 import * as actions from '../../actions'
-
-const Page = props => {
-  return <div> {props.children} </div>
-}
+import Preloader from '../Preloader'
 
 const Content = Layout.Content
 
-class MoviePage extends React.Component {
-  state = {
-    currentMovie: '',
-  }
+const NoContent = props => <h1>Sorry, no movie {props.movie}</h1>
 
-  static getDerivedStateFromProps (nextProps) {
-    return {
-      currentMovie: nextProps.currentPage,
-      totalResults: nextProps.totalResults
-    }
-  }
-
-  handlePaginationChange = page => {
-    const config = {
-      page,
-      query: this.props.query
-    }
-    this.props.fetchMovies(config)
-  }
-
-
+class MovieCard extends React.Component {
   render () {
     const imageApi = 'https://image.tmdb.org/t/p/'
 
@@ -45,38 +24,38 @@ class MoviePage extends React.Component {
                 <Col xs={24} lg={16}>
 
                   <Row justify='center'>
-                    <h1>{this.props.movie.title}</h1>
+                    <h1>{this.props.movie.get('title')}</h1>
                   </Row>
 
                   <Row>
-                    <span>Genre: {this.props.movie.genres ? this.props.movie.genres.map(genre=>genre.name).join(', ') : 'unknown'}</span>
+                    <span>Genre: {this.props.movie.get('genres') ? this.props.movie.get('genres').map(genre=>genre.get('name')).join(', ') : 'unknown'}</span>
                   </Row>
 
                   <Row>
-                    <p>{this.props.movie.overview}</p>
+                    <p>{this.props.movie.get('overview')}</p>
                   </Row>
 
                   <Row justify='center'>
-                    <p>Budget: {this.props.movie.budget}</p>
+                    <p>Budget: {this.props.movie.get('budget')}</p>
                   </Row>
                   <Row justify='center'>
-                    <p>Release: {this.props.movie.release_date}</p>
+                    <p>Release: {this.props.movie.get('release_date')}</p>
                   </Row>
 
                   <Row justify='center'>
-                    <span>Popularity: {this.props.movie.popularity}</span>
+                    <span>Popularity: {this.props.movie.get('popularity')}</span>
                   </Row>
                   <Row justify='center'>
-                    <p>Average vote: {this.props.movie.vote_average}</p>
+                    <p>Average vote: {this.props.movie.get('vote_average')}</p>
                   </Row>
                   <Row justify='center'>
-                    <p>Votes: {this.props.movie.vote_count}</p>
+                    <p>Votes: {this.props.movie.get('vote_count')}</p>
                   </Row>
 
                 </Col>
 
                 <Col xs={24} lg={8}>
-                  <img src={`${imageApi}/w300/${this.props.movie.poster_path}`} alt="no poster"/>
+                  <img src={`${imageApi}/w300/${this.props.movie.get('poster_path')}`} alt="no poster"/>
                 </Col>
 
               </Row>
@@ -89,23 +68,38 @@ class MoviePage extends React.Component {
   }
 }
 
+class MoviePage extends React.Component {
+  componentDidMount(){
+    console.log('didMount')
+    this.props.fetchCurrentMovie(this.props.match.params.id)
+  }
+
+  componentWillUnmount(){
+    this.props.clearCurrentMovie()
+  }
+
+  render () {
+    return <DelayedMovieCard {...this.props}/>
+  }
+}
+
+const DelayedMovieCard = branch(
+  props => !props.movie || !props.movie.get('id'),
+  renderComponent(Preloader)
+)(MovieCard)
+
+
 const mapDispatchToProps = dispatch => {
   return {
-    fetchMovies: query => dispatch(actions.fetchMovies(query))
+    fetchCurrentMovie: id => dispatch(actions.fetchCurrentMovie(id)),
+    clearCurrentMovie: () => dispatch(actions.clearCurrentMovie()),
   }
 }
 
 const mapStateToProps = state => {
   return {
-    movie: state.currentMovie
+    movie: state.get('currentMovie')
   }
 }
 
-const NoContent = props => <h3>Sorry, no movie</h3>
-
-const DelayedMoviePage = branch(
-  props => !props.movie, //TODO: loading + spinner
-  renderComponent(NoContent)
-)(MoviePage)
-
-export default connect(mapStateToProps, mapDispatchToProps)(DelayedMoviePage)
+export default connect(mapStateToProps, mapDispatchToProps)(MoviePage)

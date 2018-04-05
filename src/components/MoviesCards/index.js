@@ -4,6 +4,8 @@ import { Switch, Route } from 'react-router-dom'
 
 import { List, Avatar, Icon } from 'antd'
 import * as actions from '../../actions'
+import {branch, renderComponent} from "recompose";
+import Preloader from "../Preloader";
 
 class MoviesCards extends React.Component {
   state = {
@@ -27,7 +29,6 @@ class MoviesCards extends React.Component {
   }
 
   handleMovieCardClick = movieId => {
-    this.props.fetchCurrentMovie(movieId)
     this.props.history.push(`movies/${movieId}`)
   }
 
@@ -52,24 +53,29 @@ class MoviesCards extends React.Component {
       itemLayout="vertical"
       size="large"
       pagination={pagination}
-      dataSource={this.props.movies || []}
+      dataSource={this.props.movies ? this.props.movies.toArray() : []}
       renderItem={movie => (
         <List.Item
-          key={movie.title}
-          actions={[<IconText type="star-o" text={movie.vote_average} />, <IconText type="like-o" text={movie.popularity}/>, <IconText type="calendar" text={movie.release_date} />]}
-          extra={<img alt="no poster" src={`${imageApi}/w154/${movie.poster_path}`} />}
-          onClick ={()=>this.handleMovieCardClick(movie.id)}
+          key={movie.get('title')}
+          actions={[<IconText type="star-o" text={movie.get('vote_average')} />, <IconText type="like-o" text={movie.get('popularity')}/>, <IconText type="calendar" text={movie.get('release_date')} />]}
+          extra={<img alt="no poster" src={`${imageApi}/w154/${movie.get('poster_path')}`} />}
+          onClick ={()=>this.handleMovieCardClick(movie.get('id'))}
         >
           <List.Item.Meta
-            title={movie.title}
-            description={movie.adult && '18+'}
+            title={movie.get('title')}
+            description={movie.get('adult') && '18+'}
           />
-          {movie.overview}
+          {movie.get('overview')}
         </List.Item>
       )}
     />
   }
 }
+
+const DelayedMovieCard = branch(
+  props => !props.movie || !props.movie.get('id'),
+  renderComponent(Preloader)
+)(MovieCard)
 
 const mapDispatchToProps = dispatch => {
   return {
@@ -80,11 +86,11 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
   return {
-    movies: state.movies.results,
-    query: state.movies.query,
-    currentPage: state.movies.page,
-    totalResults: state.movies.total_results,
-    totalPages: state.movies.total_pages
+    movies: state.getIn(['movies', 'results']),
+    query: state.getIn(['movies', 'query']),
+    currentPage: state.getIn(['movies', 'page']),
+    totalResults: state.getIn(['movies', 'total_results']),
+    totalPages: state.getIn(['movies', 'total_pages']),
   }
 }
 

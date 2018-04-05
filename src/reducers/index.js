@@ -1,4 +1,5 @@
-import {combineReducers} from 'redux';
+
+import { combineReducers } from 'redux-immutable'
 
 import movies from './movies'
 import currentMovie from './movie'

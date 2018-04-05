@@ -26,22 +26,25 @@
 //     "vote_count": 0
 // }
 
-const initialState = null
+import { Map } from "immutable";
+
+const initialState = Map({})
 
 const movieReducer = (state = initialState, action)=>{
-  let _state = {...state}, _action = {...action};
 
-  switch(_action.type){
-
+  switch(action.type){
     case 'SET_CURRENT_MOVIE':
-      _state = {...state, ..._action.payload}
-      break;
+      return state.merge(action.payload)
+      break
+    case 'CLEAR_CURRENT_MOVIE':
+      return state.clear()
+      break
 
     default:
-      return state;
+      return state
   }
 
-  return _state;
+  return state
 }
 
 export default movieReducer

@@ -1,7 +1,6 @@
 import React from 'react';
-import {connect} from 'react-redux';
 
-import * as style from './style.scss';
+import style from './style.css';
 
 class Preloader extends React.Component{
   constructor(){
@@ -14,8 +13,8 @@ class Preloader extends React.Component{
 
   render(){
     return(
-      <div className = {style.modalPreloader}>
-        <div className = {style.preloader}></div>
+      <div className = "modalPreloader">
+        <div className = "preloader"></div>
       </div>
     )
   }

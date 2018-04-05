@@ -1,31 +1,29 @@
-const initialState = {
+import { List, Map } from 'immutable'
+
+const initialState = Map({
   results: null,
   page: 1,
   total_pages: 0,
   total_results: 0,
   query: ''
-}
+})
 
 const moviesReducer = (state = initialState, action)=>{
-  let _state = {...state}, _action = {...action};
 
-  switch(_action.type){
+  switch(action.type){
 
     case 'SET_MOVIES':
-      _state = {...state, ..._action.payload}
+      return state.merge(action.payload)
       break;
     case 'SET_QUERY':
-      _state = {
-        ...state,
-        query: _action.payload
-      }
+      return state.set('query', action.payload)
       break;
 
     default:
       return state;
   }
 
-  return _state;
+  return state;
 }
 
 export default moviesReducer

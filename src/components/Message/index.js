@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import * as style from './style.scss';
+import * as style from './style.css';
 
 class Message extends React.Component{
   constructor(){

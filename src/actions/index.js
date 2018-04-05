@@ -1,5 +1,6 @@
 import * as api from '../utils/api'
 import axios from 'axios'
+import { List, Map, fromJS } from 'immutable'
 
 export function showPreloader(){
   return {
@@ -40,7 +41,8 @@ export function fetchGenres(){
     dispatch(showPreloader())
     try {
       const { data } = await axios.get(api.fetchGenres())
-      dispatch(setGenres(data))
+      const dataToSet = Map(fromJS(data))
+      dispatch(setGenres(dataToSet))
     } catch (err) {
       console.log(err)
     } finally {
@@ -62,7 +64,8 @@ export function fetchMovies({query = '', page = 1}){
     dispatch(showPreloader())
     try {
       const { data } = await axios.get(api.searchMovie(query, page))
-      dispatch(setMovies(data))
+      const dataToSet = Map(fromJS(data))
+      dispatch(setMovies(dataToSet))
     } catch (err) {
       console.log(err)
     } finally {
@@ -84,7 +87,8 @@ export function fetchCurrentMovie(id){
     dispatch(showPreloader())
     try {
       const { data } = await axios.get(api.fetchMovie(id))
-      dispatch(setCurrentMovie(data))
+      const dataToSet = Map(fromJS(data))
+      dispatch(setCurrentMovie(dataToSet))
     } catch (err) {
       console.log(err)
     } finally {
@@ -98,6 +102,12 @@ export function setCurrentMovie(data){
   return {
     type: 'SET_CURRENT_MOVIE',
     payload: data
+  }
+}
+
+export function clearCurrentMovie(){
+  return {
+    type: 'CLEAR_CURRENT_MOVIE'
   }
 }
 
