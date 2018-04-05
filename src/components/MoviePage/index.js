@@ -2,12 +2,14 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {branch, renderComponent} from 'recompose'
 
-import { List, Avatar, Icon } from 'antd'
+import { Card, Layout, Row, Col } from 'antd'
 import * as actions from '../../actions'
 
 const Page = props => {
   return <div> {props.children} </div>
 }
+
+const Content = Layout.Content
 
 class MoviePage extends React.Component {
   state = {
@@ -29,49 +31,61 @@ class MoviePage extends React.Component {
     this.props.fetchMovies(config)
   }
 
-  handleMovieCardClick = movieId => {
-    console.log('eee', movieId)
-    
-  }
-
 
   render () {
-    const IconText = ({ type, text }) => (
-      <span>
-      <Icon type={type} style={{ marginRight: 8 }} />
-        {text}
-    </span>
-    )
-
-    const pagination = {
-      pageSize: 20,
-      current: this.state.currentPage,
-      total: this.state.totalResults,
-      onChange: this.handlePaginationChange
-    }
-
     const imageApi = 'https://image.tmdb.org/t/p/'
 
-    return <List
-      itemLayout="vertical"
-      size="large"
-      pagination={pagination}
-      dataSource={this.props.movies || []}
-      renderItem={movie => (
-        <List.Item
-          key={movie.title}
-          actions={[<IconText type="star-o" text={movie.vote_average} />, <IconText type="like-o" text={movie.popularity}/>, <IconText type="calendar" text={movie.release_date} />]}
-          extra={<img alt="no poster" src={`${imageApi}/w154/${movie.poster_path}`} />}
-          onClick ={()=>this.handleMovieCardClick(movie.id)}
-        >
-          <List.Item.Meta
-            title={this.props.title}
-            description={movie.adult && '18+'}
-          />
-          {movie.overview}
-        </List.Item>
-      )}
-    />
+    return(
+      <Layout>
+        <Content style={{ background: '#fff' }} >
+          <Row justify='center'>
+            <Card bordered={false} style={{ width: '80%' }}>
+              <Row justify='center'>
+
+                <Col xs={24} lg={16}>
+
+                  <Row justify='center'>
+                    <h1>{this.props.movie.title}</h1>
+                  </Row>
+
+                  <Row>
+                    <span>Genre: {this.props.movie.genres ? this.props.movie.genres.map(genre=>genre.name).join(', ') : 'unknown'}</span>
+                  </Row>
+
+                  <Row>
+                    <p>{this.props.movie.overview}</p>
+                  </Row>
+
+                  <Row justify='center'>
+                    <p>Budget: {this.props.movie.budget}</p>
+                  </Row>
+                  <Row justify='center'>
+                    <p>Release: {this.props.movie.release_date}</p>
+                  </Row>
+
+                  <Row justify='center'>
+                    <span>Popularity: {this.props.movie.popularity}</span>
+                  </Row>
+                  <Row justify='center'>
+                    <p>Average vote: {this.props.movie.vote_average}</p>
+                  </Row>
+                  <Row justify='center'>
+                    <p>Votes: {this.props.movie.vote_count}</p>
+                  </Row>
+
+                </Col>
+
+                <Col xs={24} lg={8}>
+                  <img src={`${imageApi}/w300/${this.props.movie.poster_path}`} alt="no poster"/>
+                </Col>
+
+              </Row>
+
+            </Card>
+          </Row>
+        </Content>
+      </Layout>
+    )
   }
 }
 
@@ -83,7 +97,7 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
   return {
-    movie: state.movie
+    movie: state.currentMovie
   }
 }
 
