@@ -5,10 +5,9 @@ import {branch, renderComponent} from 'recompose'
 import { Card, Layout, Row, Col } from 'antd'
 import * as actions from '../../actions'
 import Preloader from '../Preloader'
+import NoContent from '../NoContent'
 
 const Content = Layout.Content
-
-const NoContent = props => <h1>Sorry, no movie {props.movie}</h1>
 
 class MovieCard extends React.Component {
   render () {

@@ -1,23 +1,29 @@
 import React from 'react';
+import {connect} from 'react-redux'
 
 import style from './style.css';
 
 class Preloader extends React.Component{
-  constructor(){
-    super();
-    this.state = {
-      isShown: false
-    }
-  }
-
+  state = {isShown: false}
+  renderPreloader = isShown =>
+    isShown &&
+    <div className = "modalPreloader">
+      <div className = "preloader"></div>
+    </div>
 
   render(){
-    return(
-      <div className = "modalPreloader">
-        <div className = "preloader"></div>
-      </div>
+    return (
+      <React.Fragment>
+        {this.renderPreloader(this.props.preloader)}
+      </React.Fragment>
     )
   }
 }
 
-export default Preloader
+const mapStateToProps = state => {
+  return {
+    preloader: state.getIn(['preloader'])
+  }
+}
+
+export default connect(mapStateToProps)(Preloader)

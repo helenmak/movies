@@ -1,11 +1,9 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import { Switch, Route } from 'react-router-dom'
 
-import { List, Avatar, Icon } from 'antd'
+import { List, Icon } from 'antd'
 import * as actions from '../../actions'
-import {branch, renderComponent} from "recompose";
-import Preloader from "../Preloader";
+import { push } from 'react-router-redux'
 
 class MoviesCards extends React.Component {
   state = {
@@ -29,7 +27,7 @@ class MoviesCards extends React.Component {
   }
 
   handleMovieCardClick = movieId => {
-    this.props.history.push(`movies/${movieId}`)
+    this.props.goToPage(`movies/${movieId}`)
   }
 
   render () {
@@ -72,15 +70,11 @@ class MoviesCards extends React.Component {
   }
 }
 
-const DelayedMovieCard = branch(
-  props => !props.movie || !props.movie.get('id'),
-  renderComponent(Preloader)
-)(MovieCard)
-
 const mapDispatchToProps = dispatch => {
   return {
     fetchMovies: query => dispatch(actions.fetchMovies(query)),
-    fetchCurrentMovie: id => dispatch(actions.fetchCurrentMovie(id))
+    fetchCurrentMovie: id => dispatch(actions.fetchCurrentMovie(id)),
+    goToPage: route => dispatch(push(route))
   }
 }
 
