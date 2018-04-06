@@ -6,21 +6,20 @@ import * as actions from '../../actions'
 
 const Search = Input.Search
 
-class SearchSection extends React.Component {
-  fetchMovies = (query) => {
-    this.props.setQuery(query)
-    this.props.fetchMovies({query})
+const SearchSection = props => {
+
+  const fetchMovies = query => {
+    props.setQuery(query)
+    props.fetchMovies({query})
   }
 
-  render () {
-    return <Search
-      placeholder="search here..."
-      onSearch={this.fetchMovies}
-      style={{ width: 400 }}
-      enterButton="Search"
-      size="large"
-    />
-  }
+  return <Search
+    placeholder="your movie"
+    onSearch={fetchMovies}
+    style={{ width: 500 }}
+    enterButton="Search"
+    size="large"
+  />
 }
 
 const mapDispatchToProps = dispatch => {

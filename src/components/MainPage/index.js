@@ -1,11 +1,11 @@
 import React from 'react'
 import {connect} from 'react-redux'
+
+import { Row } from 'antd'
 import * as actions from "../../actions"
 import SearchSection from '../SearchSection'
 import MoviesCards from '../MoviesCards'
-import MoviePage from '../MoviePage'
-import {Route, Switch} from "react-router-dom"
-import {branch, renderComponent} from "recompose"
+import {branch} from "recompose"
 import NoContent from '../NoContent'
 
 class MainPage extends React.Component{
@@ -17,24 +17,23 @@ class MainPage extends React.Component{
 
   render () {
     return (
-      <div>
-        <Switch>
-          <Route path="/" exact render = { props =>
-            <React.Fragment>
-              <SearchSection/>
-              <MoviesCards {...props}/>
-            </React.Fragment>
-          } />
-          <Route path="/movies/:id" component = {MoviePage}/>
-        </Switch>
-      </div>
+      <React.Fragment>
+          <Row type="flex" justify='center'>
+            <SearchSection/>
+          </Row>
+          <Row type="flex" justify='center'>
+            <ConditionalMoviesCards {...this.props}/>
+          </Row>
+      </React.Fragment>
     )
   }
 }
 
-const DelayedMoviesCards = branch(
-  props => props.movies,
-  renderComponent(NoContent)
+const renderNoContent = props => props => <NoContent message={'Start search here'} />
+
+const ConditionalMoviesCards = branch(
+  props => !props.movies,
+  renderNoContent
 )(MoviesCards)
 
 const mapStateToProps = state => {

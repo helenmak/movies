@@ -1,6 +1,6 @@
 import * as api from '../utils/api'
 import axios from 'axios'
-import { List, Map, fromJS } from 'immutable'
+import { Map, fromJS } from 'immutable'
 
 export function showPreloader(){
   return {
@@ -14,21 +14,6 @@ export function hidePreloader(){
   }
 }
 
-export function showSuccessMsg(){
-  return (dispatch)=> {
-    setTimeout(()=>{
-      dispatch(hideSuccessMsg());
-    }, 4*1000)
-    return dispatch({type: 'SHOW_SUCCESS_MSG'});
-  }
-}
-
-export function hideSuccessMsg(){
-  return {
-    type: 'HIDE_SUCCESS_MSG',
-  }
-}
-
 export function setQuery(query){
   return {
     type: 'SET_QUERY',
@@ -38,16 +23,12 @@ export function setQuery(query){
 
 export function fetchGenres(){
   return async dispatch => {
-    dispatch(showPreloader())
     try {
       const { data } = await axios.get(api.fetchGenres())
       const dataToSet = Map(fromJS(data))
       dispatch(setGenres(dataToSet))
     } catch (err) {
       console.log(err)
-    } finally {
-      dispatch(hidePreloader())
-      dispatch(showSuccessMsg());
     }
   }
 }
@@ -70,7 +51,6 @@ export function fetchMovies({query = '', page = 1}){
       console.log(err)
     } finally {
       dispatch(hidePreloader())
-      dispatch(showSuccessMsg());
     }
   }
 }
@@ -93,7 +73,6 @@ export function fetchCurrentMovie(id){
       console.log(err)
     } finally {
       dispatch(hidePreloader())
-      dispatch(showSuccessMsg());
     }
   }
 }
@@ -108,12 +87,5 @@ export function setCurrentMovie(data){
 export function clearCurrentMovie(){
   return {
     type: 'CLEAR_CURRENT_MOVIE'
-  }
-}
-
-export function abortSubmit(err){
-  return {
-    type: "ABORT_SUBMIT",
-    payload: err
   }
 }

@@ -1,3 +1,3 @@
 import React from 'react'
 
-export default props => <h1>Sorry, no content</h1>
+export default props => <h2>{props.message || 'No data'}</h2>

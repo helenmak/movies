@@ -1,4 +1,4 @@
-import { List, Map } from 'immutable'
+import { Map } from 'immutable'
 
 const initialState = Map({
   results: null,
@@ -11,19 +11,15 @@ const initialState = Map({
 const moviesReducer = (state = initialState, action)=>{
 
   switch(action.type){
-
     case 'SET_MOVIES':
       return state.merge(action.payload)
-      break;
+
     case 'SET_QUERY':
       return state.set('query', action.payload)
-      break;
 
     default:
-      return state;
+      return state
   }
-
-  return state;
 }
 
 export default moviesReducer

@@ -18,26 +18,39 @@ class MoviesCards extends React.Component {
     }
   }
 
+  imageApi = 'https://image.tmdb.org/t/p/'
+
   handlePaginationChange = page => {
-    const config = {
-      page,
-      query: this.props.query
-    }
+    const config = {page, query: this.props.query}
     this.props.fetchMovies(config)
   }
 
-  handleMovieCardClick = movieId => {
-    this.props.goToPage(`movies/${movieId}`)
-  }
+  handleMovieCardClick = movieId => this.props.goToPage(`movies/${movieId}`)
+
+  renderIconText = (type, text) =>
+    <span>
+      <Icon type={type} style={{ marginRight: 8 }} />
+      {text}
+    </span>
+
+  renderMovieItem = movie =>
+    <List.Item
+      style={{minHeight: '263px'}}
+      key={movie.get('title')}
+      actions={[this.renderIconText("star-o", movie.get('vote_average')), this.renderIconText("like-o", movie.get('popularity')), this.renderIconText('calendar', movie.get('release_date'))]}
+      extra={<img alt="no poster" src={`${this.imageApi}/w154/${movie.get('poster_path')}`} />}
+      onClick ={()=>this.handleMovieCardClick(movie.get('id'))}
+    >
+      <List.Item.Meta
+        title={movie.get('title')}
+        description={movie.get('adult') && '18+'}
+      />
+      {movie.get('overview')}
+    </List.Item>
+
+  setDataSource = movies => movies ? movies.toArray() : []
 
   render () {
-    const IconText = ({ type, text }) => (
-      <span>
-      <Icon type={type} style={{ marginRight: 8 }} />
-        {text}
-    </span>
-    )
-
     const pagination = {
       pageSize: 20,
       current: this.state.currentPage,
@@ -45,27 +58,12 @@ class MoviesCards extends React.Component {
       onChange: this.handlePaginationChange
     }
 
-    const imageApi = 'https://image.tmdb.org/t/p/'
-
     return <List
       itemLayout="vertical"
       size="large"
-      pagination={pagination}
-      dataSource={this.props.movies ? this.props.movies.toArray() : []}
-      renderItem={movie => (
-        <List.Item
-          key={movie.get('title')}
-          actions={[<IconText type="star-o" text={movie.get('vote_average')} />, <IconText type="like-o" text={movie.get('popularity')}/>, <IconText type="calendar" text={movie.get('release_date')} />]}
-          extra={<img alt="no poster" src={`${imageApi}/w154/${movie.get('poster_path')}`} />}
-          onClick ={()=>this.handleMovieCardClick(movie.get('id'))}
-        >
-          <List.Item.Meta
-            title={movie.get('title')}
-            description={movie.get('adult') && '18+'}
-          />
-          {movie.get('overview')}
-        </List.Item>
-      )}
+      pagination = {this.props.movies.first() ? pagination : false}
+      dataSource={this.setDataSource(this.props.movies)}
+      renderItem={this.renderMovieItem}
     />
   }
 }
